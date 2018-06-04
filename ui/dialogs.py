@@ -11,26 +11,34 @@ Copyright (c) 2014 SECFORCE (Antonio Quina and Leonidas Stavliotis)
     You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import os
-from PyQt4.QtGui import *												# for filters dialog
+import os, sys
+# try:
+# 	from PyQt4.QtGui import *												# for filters dialog
+# except ImportError:
+# 	try:
+from PyQt5 import QtGui, QtCore, QtWidgets
+	# except ImportError:
+	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
+	# 		"install python-qt5 "
+	# 	sys.exit(1)
 from app.auxiliary import *												# for timestamps
 
 # progress bar widget that displayed when long operations are taking place (eg: nmap, opening project)
-class ProgressWidget(QtGui.QDialog):
+class ProgressWidget(QtWidgets.QDialog):
 	def __init__(self, text, parent=None):
-		QtGui.QDialog.__init__(self, parent)
+		QtWidgets.QDialog.__init__(self, parent)
 		self.text = text
 		self.setWindowTitle(text)
 		self.setupLayout()
 
 	def setupLayout(self):
 		self.setWindowModality(True)
-		vbox = QtGui.QVBoxLayout()
-		self.label = QtGui.QLabel('')
-		self.progressBar = QtGui.QProgressBar()
+		vbox = QtWidgets.QVBoxLayout()
+		self.label = QtWidgets.QLabel('')
+		self.progressBar = QtWidgets.QProgressBar()
 		vbox.addWidget(self.label)
 		vbox.addWidget(self.progressBar)
-		hbox = QtGui.QHBoxLayout()
+		hbox = QtWidgets.QHBoxLayout()
 		hbox.addStretch(1)
 		vbox.addLayout(hbox)
 		self.setLayout(vbox)
@@ -48,18 +56,18 @@ class ProgressWidget(QtGui.QDialog):
 		self.setProgress(0)
 
 # this class is used to display screenshots and perform zoom operations on the images
-class ImageViewer(QtGui.QWidget):
+class ImageViewer(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.scaleFactor = 0.0
 
-        self.imageLabel = QtGui.QLabel()
+        self.imageLabel = QtWidgets.QLabel()
         self.imageLabel.setBackgroundRole(QtGui.QPalette.Base)
-        self.imageLabel.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+        self.imageLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         self.imageLabel.setScaledContents(True)
 
-        self.scrollArea = QtGui.QScrollArea()
+        self.scrollArea = QtWidgets.QScrollArea()
         self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
         self.scrollArea.setWidget(self.imageLabel)
 
@@ -67,7 +75,7 @@ class ImageViewer(QtGui.QWidget):
         if fileName:
             image = QtGui.QImage(fileName)
             if image.isNull():
-                QtGui.QMessageBox.information(self, "Image Viewer","Cannot load %s." % fileName)
+                QtWidgets.QMessageBox.information(self, "Image Viewer","Cannot load %s." % fileName)
                 return
 
             self.imageLabel.setPixmap(QtGui.QPixmap.fromImage(image))
@@ -100,13 +108,13 @@ class ImageViewer(QtGui.QWidget):
 		scrollBar.setValue(int(factor * scrollBar.value() + ((factor - 1) * scrollBar.pageStep()/2)))
 
 # this class is used to display the process status GIFs
-class ImagePlayer(QtGui.QWidget):
+class ImagePlayer(QtWidgets.QWidget):
     def __init__(self, filename, parent=None):
-		QtGui.QWidget.__init__(self, parent)
+		QtWidgets.QWidget.__init__(self, parent)
 		self.movie = QtGui.QMovie(filename)								# load the file into a QMovie
-		self.movie_screen = QtGui.QLabel()
-		self.movie_screen.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-		main_layout = QtGui.QVBoxLayout()
+		self.movie_screen = QtWidgets.QLabel()
+		self.movie_screen.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+		main_layout = QtWidgets.QVBoxLayout()
 		main_layout.addWidget(self.movie_screen)
 		self.setLayout(main_layout)
 		self.movie.setCacheMode(QtGui.QMovie.CacheAll)
@@ -116,9 +124,9 @@ class ImagePlayer(QtGui.QWidget):
 #		self.show()
 
 # dialog shown when the user selects "Add host(s)" from the menu
-class AddHostsDialog(QtGui.QDialog):
+class AddHostsDialog(QtWidgets.QDialog):
 	def __init__(self, parent=None):
-		QtGui.QDialog.__init__(self, parent)
+		QtWidgets.QDialog.__init__(self, parent)
 		self.setupLayout()
 		
 	def setupLayout(self):
@@ -126,41 +134,41 @@ class AddHostsDialog(QtGui.QDialog):
 		self.setWindowTitle('Add host(s) to scope')
 		self.setFixedSize(340, 210)
 
-		self.flayout = QtGui.QVBoxLayout()
+		self.flayout = QtWidgets.QVBoxLayout()
 		
-		self.label1 = QtGui.QLabel(self)
+		self.label1 = QtWidgets.QLabel(self)
 		self.label1.setText('IP Range')
-		self.textinput = QtGui.QLineEdit(self)
-		self.hlayout = QtGui.QHBoxLayout()
+		self.textinput = QtWidgets.QLineEdit(self)
+		self.hlayout = QtWidgets.QHBoxLayout()
 		self.hlayout.addWidget(self.label1)
 		self.hlayout.addWidget(self.textinput)        
 		
-		self.label2 = QtGui.QLabel(self)
+		self.label2 = QtWidgets.QLabel(self)
 		self.label2.setText('eg: 192.168.1.0/24 10.10.10.10-20 1.2.3.4 ')
 		self.font = QtGui.QFont('Arial', 10)
 		self.label2.setFont(self.font)
 		self.label2.setAlignment(Qt.AlignRight)
-		self.spacer = QSpacerItem(15,15)
+		self.spacer = QtWidgets.QSpacerItem(15,15)
 		###
-		self.validationLabel = QtGui.QLabel(self)
+		self.validationLabel = QtWidgets.QLabel(self)
 		self.validationLabel.setText('Invalid input. Please try again!')
 		self.validationLabel.setStyleSheet('QLabel { color: red }')
 		###
-		self.spacer2 = QSpacerItem(5,5)
+		self.spacer2 = QtWidgets.QSpacerItem(5,5)
 		
-		self.discovery = QtGui.QCheckBox(self)
+		self.discovery = QtWidgets.QCheckBox(self)
 		self.discovery.setText('Run nmap host discovery')
 		self.discovery.toggle()		# on by default
-		self.nmap = QtGui.QCheckBox(self)
+		self.nmap = QtWidgets.QCheckBox(self)
 		self.nmap.setText('Run staged nmap scan')
 		self.nmap.toggle()			# on by default
 		
-		self.cancelButton = QPushButton('Cancel', self)
+		self.cancelButton = QtWidgets.QPushButton('Cancel', self)
 		self.cancelButton.setMaximumSize(110, 30)
-		self.addButton = QPushButton('Add to scope', self)
+		self.addButton = QtWidgets.QPushButton('Add to scope', self)
 		self.addButton.setMaximumSize(110, 30)
 		self.addButton.setDefault(True)
-		self.hlayout2 = QtGui.QHBoxLayout()
+		self.hlayout2 = QtWidgets.QHBoxLayout()
 		self.hlayout2.addWidget(self.cancelButton)
 		self.hlayout2.addWidget(self.addButton)
 		self.flayout.addLayout(self.hlayout)
@@ -176,10 +184,10 @@ class AddHostsDialog(QtGui.QDialog):
 		self.flayout.addLayout(self.hlayout2)
 		self.setLayout(self.flayout)
 
-class BruteWidget(QtGui.QWidget):
+class BruteWidget(QtWidgets.QWidget):
 	
 	def __initold__(self, ip, port, service, hydraServices, hydraNoUsernameServices, hydraNoPasswordServices, bruteSettings, generalSettings, parent=None):
-		QtGui.QWidget.__init__(self, parent)
+		QtWidgets.QWidget.__init__(self, parent)
 		self.ip = ip
 		self.port = port
 		self.service = service
@@ -200,7 +208,7 @@ class BruteWidget(QtGui.QWidget):
 		self.checkAddMoreOptions.stateChanged.connect(self.showMoreOptions)
 		
 	def __init__(self, ip, port, service, settings, parent=None):
-		QtGui.QWidget.__init__(self, parent)
+		QtWidgets.QWidget.__init__(self, parent)
 		self.ip = ip
 		self.port = port
 		self.service = service
@@ -240,27 +248,27 @@ class BruteWidget(QtGui.QWidget):
 		elif self.service == "vmware-auth":
 			self.service = "vmauthd"
 
-		self.label1 = QtGui.QLabel()
+		self.label1 = QtWidgets.QLabel()
 		self.label1.setText('IP')
 		#self.label1.setFixedWidth(10)			# experimental
 		#self.label1.setAlignment(Qt.AlignLeft)
-		self.ipTextinput = QtGui.QLineEdit()
+		self.ipTextinput = QtWidgets.QLineEdit()
 		self.ipTextinput.setText(str(self.ip))
 		self.ipTextinput.setFixedWidth(125)
 		
-		self.label2 = QtGui.QLabel()
+		self.label2 = QtWidgets.QLabel()
 		self.label2.setText('Port')
 		#self.label2.setFixedWidth(10)			# experimental
 		#self.label2.setAlignment(Qt.AlignLeft)
-		self.portTextinput = QtGui.QLineEdit()
+		self.portTextinput = QtWidgets.QLineEdit()
 		self.portTextinput.setText(str(self.port))
 		self.portTextinput.setFixedWidth(60)
 		
-		self.label3 = QtGui.QLabel()
+		self.label3 = QtWidgets.QLabel()
 		self.label3.setText('Service')
 		#self.label3.setFixedWidth(10)			# experimental
 		#self.label3.setAlignment(Qt.AlignLeft)
-		self.serviceComboBox = QtGui.QComboBox()
+		self.serviceComboBox = QtWidgets.QComboBox()
 		self.serviceComboBox.insertItems(0, self.settings.brute_services.split(","))
 		self.serviceComboBox.setStyleSheet("QComboBox { combobox-popup: 0; }");
 		
@@ -274,7 +282,7 @@ class BruteWidget(QtGui.QWidget):
 #		self.labelPath.setFixedWidth(800)
 #		self.labelPath.setText('/')
 
-		self.runButton = QPushButton('Run')
+		self.runButton = QtWidgets.QPushButton('Run')
 		self.runButton.setMaximumSize(110, 30)
 		self.runButton.setDefault(True)	# new
 		
@@ -284,7 +292,7 @@ class BruteWidget(QtGui.QWidget):
 		self.validationLabel.setStyleSheet('QLabel { color: red }')
 		###
 
-		self.hlayout = QtGui.QHBoxLayout()
+		self.hlayout = QtWidgets.QHBoxLayout()
 		self.hlayout.addWidget(self.label1)
 		self.hlayout.addWidget(self.ipTextinput)
 		self.hlayout.addWidget(self.label2)
@@ -298,34 +306,34 @@ class BruteWidget(QtGui.QWidget):
 		###
 		self.hlayout.addStretch()
 
-		self.singleUserRadio = QtGui.QRadioButton()
-		self.label4 = QtGui.QLabel()
+		self.singleUserRadio = QtWidgets.QRadioButton()
+		self.label4 = QtWidgets.QLabel()
 		self.label4.setText('Username')
 		self.label4.setFixedWidth(70)
-		self.usersTextinput = QtGui.QLineEdit()
+		self.usersTextinput = QtWidgets.QLineEdit()
 		self.usersTextinput.setFixedWidth(125)
 		self.usersTextinput.setText(self.settings.brute_default_username)
-		self.userListRadio = QtGui.QRadioButton()
-		self.label5 = QtGui.QLabel()
+		self.userListRadio = QtWidgets.QRadioButton()
+		self.label5 = QtWidgets.QLabel()
 		self.label5.setText('Username list')
 		self.label5.setFixedWidth(90)
-		self.userlistTextinput = QtGui.QLineEdit()
+		self.userlistTextinput = QtWidgets.QLineEdit()
 		self.userlistTextinput.setFixedWidth(125)
-		self.browseUsersButton = QPushButton('Browse')
+		self.browseUsersButton = QtWidgets.QPushButton('Browse')
 		self.browseUsersButton.setMaximumSize(80, 30)
 		
-		self.foundUsersRadio = QtGui.QRadioButton()
-		self.label9 = QtGui.QLabel()
+		self.foundUsersRadio = QtWidgets.QRadioButton()
+		self.label9 = QtWidgets.QLabel()
 		self.label9.setText('Found usernames')
 		self.label9.setFixedWidth(117)		
 		
-		self.userGroup = QtGui.QButtonGroup()
+		self.userGroup = QtWidgets.QButtonGroup()
 		self.userGroup.addButton(self.singleUserRadio)
 		self.userGroup.addButton(self.userListRadio)
 		self.userGroup.addButton(self.foundUsersRadio)
 		self.foundUsersRadio.toggle()
 
-		self.hlayout2 = QtGui.QHBoxLayout()
+		self.hlayout2 = QtWidgets.QHBoxLayout()
 		self.hlayout2.addWidget(self.singleUserRadio)
 		self.hlayout2.addWidget(self.label4)
 		self.hlayout2.addWidget(self.usersTextinput)
@@ -338,47 +346,47 @@ class BruteWidget(QtGui.QWidget):
 		self.hlayout2.addStretch()
 		
 		#add usernames wordlist
-		self.singlePassRadio = QtGui.QRadioButton()
-		self.label6 = QtGui.QLabel()
+		self.singlePassRadio = QtWidgets.QRadioButton()
+		self.label6 = QtWidgets.QLabel()
 		self.label6.setText('Password')
 		self.label6.setFixedWidth(70)
-		self.passwordsTextinput = QtGui.QLineEdit()
+		self.passwordsTextinput = QtWidgets.QLineEdit()
 		self.passwordsTextinput.setFixedWidth(125)
 		self.passwordsTextinput.setText(self.settings.brute_default_password)
-		self.passListRadio = QtGui.QRadioButton()
-		self.label7 = QtGui.QLabel()
+		self.passListRadio = QtWidgets.QRadioButton()
+		self.label7 = QtWidgets.QLabel()
 		self.label7.setText('Password list')
 		self.label7.setFixedWidth(90)
-		self.passlistTextinput = QtGui.QLineEdit()
+		self.passlistTextinput = QtWidgets.QLineEdit()
 		self.passlistTextinput.setFixedWidth(125)
-		self.browsePasswordsButton = QPushButton('Browse')
+		self.browsePasswordsButton = QtWidgets.QPushButton('Browse')
 		self.browsePasswordsButton.setMaximumSize(80, 30)
 		
-		self.foundPasswordsRadio = QtGui.QRadioButton()
-		self.label10 = QtGui.QLabel()
+		self.foundPasswordsRadio = QtWidgets.QRadioButton()
+		self.label10 = QtWidgets.QLabel()
 		self.label10.setText('Found passwords')
 		self.label10.setFixedWidth(115)	
 		
-		self.passGroup = QtGui.QButtonGroup()
+		self.passGroup = QtWidgets.QButtonGroup()
 		self.passGroup.addButton(self.singlePassRadio)
 		self.passGroup.addButton(self.passListRadio)
 		self.passGroup.addButton(self.foundPasswordsRadio)
 		self.foundPasswordsRadio.toggle()
 
-		self.label8 = QtGui.QLabel()
+		self.label8 = QtWidgets.QLabel()
 		self.label8.setText('Threads')
 		self.label8.setFixedWidth(60)
 		self.threadOptions = []
 		for i in range(1, 129):
 			self.threadOptions.append(str(i))
-		self.threadsComboBox = QtGui.QComboBox()
+		self.threadsComboBox = QtWidgets.QComboBox()
 		self.threadsComboBox.insertItems(0, self.threadOptions)
 		self.threadsComboBox.setMinimumContentsLength(3)
 		self.threadsComboBox.setMaxVisibleItems(3)
 		self.threadsComboBox.setStyleSheet("QComboBox { combobox-popup: 0; }");
 		self.threadsComboBox.setCurrentIndex(15)	
 	
-		self.hlayout3 = QtGui.QHBoxLayout()
+		self.hlayout3 = QtWidgets.QHBoxLayout()
 		self.hlayout3.addWidget(self.singlePassRadio)
 		self.hlayout3.addWidget(self.label6)
 		self.hlayout3.addWidget(self.passwordsTextinput)
@@ -394,38 +402,38 @@ class BruteWidget(QtGui.QWidget):
 		#self.hlayout3.addStretch()
 
 		#label6.setText('Try blank password')
-		self.checkBlankPass = QtGui.QCheckBox()
+		self.checkBlankPass = QtWidgets.QCheckBox()
 		self.checkBlankPass.setText('Try blank password')
 		self.checkBlankPass.toggle()
 		#add 'try blank password'
 		#label7.setText('Try login as password')
-		self.checkLoginAsPass = QtGui.QCheckBox()
+		self.checkLoginAsPass = QtWidgets.QCheckBox()
 		self.checkLoginAsPass.setText('Try login as password')
 		self.checkLoginAsPass.toggle()
 		#add 'try login as password'
 		#label8.setText('Loop around users')
-		self.checkLoopUsers = QtGui.QCheckBox()
+		self.checkLoopUsers = QtWidgets.QCheckBox()
 		self.checkLoopUsers.setText('Loop around users')
 		self.checkLoopUsers.toggle()
 		#add 'loop around users'
 		#label9.setText('Exit on first valid')
-		self.checkExitOnValid = QtGui.QCheckBox()
+		self.checkExitOnValid = QtWidgets.QCheckBox()
 		self.checkExitOnValid.setText('Exit on first valid')
 		self.checkExitOnValid.toggle()
 		#add 'exit after first valid combination is found'
-		self.checkVerbose = QtGui.QCheckBox()
+		self.checkVerbose = QtWidgets.QCheckBox()
 		self.checkVerbose.setText('Verbose')		
 
-		self.checkAddMoreOptions = QtGui.QCheckBox()
+		self.checkAddMoreOptions = QtWidgets.QCheckBox()
 		self.checkAddMoreOptions.setText('Additional Options')
 		
 		###
-		self.labelPath = QtGui.QLineEdit()								# this is the extra input field to insert the path to brute force
+		self.labelPath = QtWidgets.QLineEdit()								# this is the extra input field to insert the path to brute force
 		self.labelPath.setFixedWidth(800)
 		self.labelPath.setText('/')
 		###
 		
-		self.hlayout4 = QtGui.QHBoxLayout()
+		self.hlayout4 = QtWidgets.QHBoxLayout()
 		self.hlayout4.addWidget(self.checkBlankPass)
 		self.hlayout4.addWidget(self.checkLoginAsPass)
 		self.hlayout4.addWidget(self.checkLoopUsers)
@@ -434,12 +442,12 @@ class BruteWidget(QtGui.QWidget):
 		self.hlayout4.addWidget(self.checkAddMoreOptions)
 		self.hlayout4.addStretch()
 
-		self.layoutAddOptions = QtGui.QHBoxLayout()
+		self.layoutAddOptions = QtWidgets.QHBoxLayout()
 		self.layoutAddOptions.addWidget(self.labelPath)
 		self.labelPath.hide()
 		self.layoutAddOptions.addStretch()
 		
-		self.display = QtGui.QPlainTextEdit()
+		self.display = QtWidgets.QPlainTextEdit()
 		self.display.setReadOnly(True)
 		if self.settings.general_tool_output_black_background == 'True':
 			#self.display.setStyleSheet("background: rgb(0,0,0)")		# black background
@@ -450,7 +458,7 @@ class BruteWidget(QtGui.QWidget):
 			self.display.setPalette(p)
 			self.display.setStyleSheet("QMenu { color:black;}") #font-size:18px; width: 150px; color:red; left: 20px;}"); # set the menu font color: black
 		
-		self.vlayout = QtGui.QVBoxLayout()
+		self.vlayout = QtWidgets.QVBoxLayout()
 		self.vlayout.addLayout(self.hlayout)
 		self.vlayout.addLayout(self.hlayout4)
 		self.vlayout.addLayout(self.layoutAddOptions)
@@ -475,11 +483,11 @@ class BruteWidget(QtGui.QWidget):
 	def wordlistDialog(self, title='Choose username list'):
 	
 		if title == 'Choose username list':
-			filename = QtGui.QFileDialog.getOpenFileName(self, title, self.settings.brute_username_wordlist_path)
+			filename = QtWidgets.QFileDialog.getOpenFileName(self, title, self.settings.brute_username_wordlist_path)
 			self.userlistTextinput.setText(str(filename))
 			self.userListRadio.toggle()
 		else:
-			filename = QtGui.QFileDialog.getOpenFileName(self, title, self.settings.brute_password_wordlist_path)
+			filename = QtWidgets.QFileDialog.getOpenFileName(self, title, self.settings.brute_password_wordlist_path)
 			self.passlistTextinput.setText(str(filename))
 			self.passListRadio.toggle()
 
@@ -560,22 +568,22 @@ class BruteWidget(QtGui.QWidget):
 
 	def resetDisplay(self):												# used to be able to display the tool output in both the Brute tab and the tool display panel
 		self.display.setParent(None)
-		self.display = QtGui.QPlainTextEdit()
+		self.display = QtWidgets.QPlainTextEdit()
 		self.display.setReadOnly(True)
 		if self.settings.general_tool_output_black_background == 'True':
 			#self.display.setStyleSheet("background: rgb(0,0,0)")		# black background
 			#self.display.setTextColor(QtGui.QColor('white'))			# white font
 			p = self.display.palette()
-			p.setColor(QtGui.QPalette.Base, Qt.black)					# black background
-			p.setColor(QtGui.QPalette.Text, Qt.white)					# white font
+			p.setColor(QtWidgets.QPalette.Base, Qt.black)					# black background
+			p.setColor(QtWidgets.QPalette.Text, Qt.white)					# white font
 			self.display.setPalette(p)
 			self.display.setStyleSheet("QMenu { color:black;}") #font-size:18px; width: 150px; color:red; left: 20px;}"); # set the menu font color: black			
 		self.vlayout.addWidget(self.display)
 
 # dialog displayed when the user clicks on the advanced filters button		
-class FiltersDialog(QtGui.QDialog):
+class FiltersDialog(QtWidgets.QDialog):
 	def __init__(self, parent=None):
-		QtGui.QDialog.__init__(self, parent)
+		QtWidgets.QDialog.__init__(self, parent)
 		self.setupLayout()
 		self.applyButton.clicked.connect(self.close)
 		self.cancelButton.clicked.connect(self.close)
@@ -585,28 +593,28 @@ class FiltersDialog(QtGui.QDialog):
 		self.setWindowTitle('Filters')
 		self.setFixedSize(640, 200)
 		
-		hostsBox = QGroupBox("Host Filters")		
-		self.hostsUp = QCheckBox("Show up hosts")
+		hostsBox = QtWidgets.QGroupBox("Host Filters")
+		self.hostsUp = QtWidgets.QCheckBox("Show up hosts")
 		self.hostsUp.toggle()
-		self.hostsDown = QCheckBox("Show down hosts")
-		self.hostsChecked = QCheckBox("Show checked hosts")
+		self.hostsDown = QtWidgets.QCheckBox("Show down hosts")
+		self.hostsChecked = QtWidgets.QCheckBox("Show checked hosts")
 		self.hostsChecked.toggle()
-		hostLayout = QVBoxLayout()
+		hostLayout = QtWidgets.QVBoxLayout()
 		hostLayout.addWidget(self.hostsUp)
 		hostLayout.addWidget(self.hostsDown)
 		hostLayout.addWidget(self.hostsChecked)
 		hostsBox.setLayout(hostLayout)
 		
-		portsBox = QGroupBox("Port Filters")
-		self.portsOpen = QCheckBox("Show open ports")
+		portsBox = QtWidgets.QGroupBox("Port Filters")
+		self.portsOpen = QtWidgets.QCheckBox("Show open ports")
 		self.portsOpen.toggle()
-		self.portsFiltered = QCheckBox("Show filtered ports")
-		self.portsClosed = QCheckBox("Show closed ports")
-		self.portsTcp = QCheckBox("Show tcp")
+		self.portsFiltered = QtWidgets.QCheckBox("Show filtered ports")
+		self.portsClosed = QtWidgets.QCheckBox("Show closed ports")
+		self.portsTcp = QtWidgets.QCheckBox("Show tcp")
 		self.portsTcp.toggle()
-		self.portsUdp = QCheckBox("Show udp")
+		self.portsUdp = QtWidgets.QCheckBox("Show udp")
 		self.portsUdp.toggle()
-		servicesLayout = QVBoxLayout()
+		servicesLayout = QtWidgets.QVBoxLayout()
 		servicesLayout.addWidget(self.portsOpen)
 		servicesLayout.addWidget(self.portsFiltered)
 		servicesLayout.addWidget(self.portsClosed)
@@ -614,26 +622,26 @@ class FiltersDialog(QtGui.QDialog):
 		servicesLayout.addWidget(self.portsUdp)
 		portsBox.setLayout(servicesLayout)
 		
-		keywordSearchBox = QGroupBox("Keyword Filters")
-		self.hostKeywordText = QLineEdit()
-		keywordLayout = QVBoxLayout()
+		keywordSearchBox = QtWidgets.QGroupBox("Keyword Filters")
+		self.hostKeywordText = QtWidgets.QLineEdit()
+		keywordLayout = QtWidgets.QVBoxLayout()
 		keywordLayout.addWidget(self.hostKeywordText)
 		keywordSearchBox.setLayout(keywordLayout)
 		
-		hlayout = QtGui.QHBoxLayout()
+		hlayout = QtWidgets.QHBoxLayout()
 		hlayout.addWidget(hostsBox)
 		hlayout.addWidget(portsBox)
 		hlayout.addWidget(keywordSearchBox)
 		
-		buttonLayout = QtGui.QHBoxLayout()
-		self.applyButton = QPushButton('Apply', self)
+		buttonLayout = QtWidgets.QHBoxLayout()
+		self.applyButton = QtWidgets.QPushButton('Apply', self)
 		self.applyButton.setMaximumSize(110, 30)
-		self.cancelButton = QPushButton('Cancel', self)
+		self.cancelButton = QtWidgets.QPushButton('Cancel', self)
 		self.cancelButton.setMaximumSize(110, 30)
 		buttonLayout.addWidget(self.cancelButton)
 		buttonLayout.addWidget(self.applyButton)
 			
-		layout = QVBoxLayout()		
+		layout = QtWidgets.QVBoxLayout()
 		layout.addLayout(hlayout)
 		layout.addLayout(buttonLayout)	
 		self.setLayout(layout)
@@ -674,96 +682,96 @@ class FiltersDialog(QtGui.QDialog):
 		self.hostKeywordText.setText(keywords)
 
 # widget in which the host information is shown
-class HostInformationWidget(QtGui.QWidget):
+class HostInformationWidget(QtWidgets.QWidget):
 	
 	def __init__(self, informationTab, parent=None):
-		QtGui.QWidget.__init__(self, parent)
+		QtWidgets.QWidget.__init__(self, parent)
 		self.informationTab = informationTab
 		self.setupLayout()
 		self.updateFields()		# set default values
 		
 	def setupLayout(self):
-		self.HostStatusLabel = QtGui.QLabel()
+		self.HostStatusLabel = QtWidgets.QLabel()
 
-		self.HostStateLabel = QtGui.QLabel()
-		self.HostStateText = QtGui.QLabel()
-		self.HostStateLayout = QtGui.QHBoxLayout()
+		self.HostStateLabel = QtWidgets.QLabel()
+		self.HostStateText = QtWidgets.QLabel()
+		self.HostStateLayout = QtWidgets.QHBoxLayout()
 		self.HostStateLayout.addSpacing(20)
 		self.HostStateLayout.addWidget(self.HostStateLabel)
 		self.HostStateLayout.addWidget(self.HostStateText)
 		self.HostStateLayout.addStretch()
 		
-		self.OpenPortsLabel = QtGui.QLabel()
-		self.OpenPortsText = QtGui.QLabel()
-		self.OpenPortsLayout = QtGui.QHBoxLayout()
+		self.OpenPortsLabel = QtWidgets.QLabel()
+		self.OpenPortsText = QtWidgets.QLabel()
+		self.OpenPortsLayout = QtWidgets.QHBoxLayout()
 		self.OpenPortsLayout.addSpacing(20)
 		self.OpenPortsLayout.addWidget(self.OpenPortsLabel)
 		self.OpenPortsLayout.addWidget(self.OpenPortsText)
 		self.OpenPortsLayout.addStretch()
 		
-		self.ClosedPortsLabel = QtGui.QLabel()
-		self.ClosedPortsText = QtGui.QLabel()
-		self.ClosedPortsLayout = QtGui.QHBoxLayout()
+		self.ClosedPortsLabel = QtWidgets.QLabel()
+		self.ClosedPortsText = QtWidgets.QLabel()
+		self.ClosedPortsLayout = QtWidgets.QHBoxLayout()
 		self.ClosedPortsLayout.addSpacing(20)
 		self.ClosedPortsLayout.addWidget(self.ClosedPortsLabel)
 		self.ClosedPortsLayout.addWidget(self.ClosedPortsText)
 		self.ClosedPortsLayout.addStretch()	
 		
-		self.FilteredPortsLabel = QtGui.QLabel()
-		self.FilteredPortsText = QtGui.QLabel()
-		self.FilteredPortsLayout = QtGui.QHBoxLayout()
+		self.FilteredPortsLabel = QtWidgets.QLabel()
+		self.FilteredPortsText = QtWidgets.QLabel()
+		self.FilteredPortsLayout = QtWidgets.QHBoxLayout()
 		self.FilteredPortsLayout.addSpacing(20)
 		self.FilteredPortsLayout.addWidget(self.FilteredPortsLabel)
 		self.FilteredPortsLayout.addWidget(self.FilteredPortsText)
 		self.FilteredPortsLayout.addStretch()	
 		###################
-		self.AddressLabel = QtGui.QLabel()
+		self.AddressLabel = QtWidgets.QLabel()
 		
-		self.IP4Label = QtGui.QLabel()
-		self.IP4Text = QtGui.QLabel()
-		self.IP4Layout = QtGui.QHBoxLayout()
+		self.IP4Label = QtWidgets.QLabel()
+		self.IP4Text = QtWidgets.QLabel()
+		self.IP4Layout = QtWidgets.QHBoxLayout()
 		self.IP4Layout.addSpacing(20)
 		self.IP4Layout.addWidget(self.IP4Label)
 		self.IP4Layout.addWidget(self.IP4Text)
 		self.IP4Layout.addStretch()
 		
-		self.IP6Label = QtGui.QLabel()
-		self.IP6Text = QtGui.QLabel()
-		self.IP6Layout = QtGui.QHBoxLayout()
+		self.IP6Label = QtWidgets.QLabel()
+		self.IP6Text = QtWidgets.QLabel()
+		self.IP6Layout = QtWidgets.QHBoxLayout()
 		self.IP6Layout.addSpacing(20)
 		self.IP6Layout.addWidget(self.IP6Label)
 		self.IP6Layout.addWidget(self.IP6Text)
 		self.IP6Layout.addStretch()
 		
-		self.MacLabel = QtGui.QLabel()
-		self.MacText = QtGui.QLabel()
-		self.MacLayout = QtGui.QHBoxLayout()
+		self.MacLabel = QtWidgets.QLabel()
+		self.MacText = QtWidgets.QLabel()
+		self.MacLayout = QtWidgets.QHBoxLayout()
 		self.MacLayout.addSpacing(20)
 		self.MacLayout.addWidget(self.MacLabel)
 		self.MacLayout.addWidget(self.MacText)
 		self.MacLayout.addStretch()
 		
-		self.dummyLabel = QtGui.QLabel()
-		self.dummyText = QtGui.QLabel()
-		self.dummyLayout = QtGui.QHBoxLayout()
+		self.dummyLabel = QtWidgets.QLabel()
+		self.dummyText = QtWidgets.QLabel()
+		self.dummyLayout = QtWidgets.QHBoxLayout()
 		self.dummyLayout.addSpacing(20)
 		self.dummyLayout.addWidget(self.dummyLabel)
 		self.dummyLayout.addWidget(self.dummyText)
 		self.dummyLayout.addStretch()
 		#########		
-		self.OSLabel = QtGui.QLabel()
+		self.OSLabel = QtWidgets.QLabel()
 		
-		self.OSNameLabel = QtGui.QLabel()
-		self.OSNameText = QtGui.QLabel()
-		self.OSNameLayout = QtGui.QHBoxLayout()
+		self.OSNameLabel = QtWidgets.QLabel()
+		self.OSNameText = QtWidgets.QLabel()
+		self.OSNameLayout = QtWidgets.QHBoxLayout()
 		self.OSNameLayout.addSpacing(20)
 		self.OSNameLayout.addWidget(self.OSNameLabel)
 		self.OSNameLayout.addWidget(self.OSNameText)
 		self.OSNameLayout.addStretch()
 		
-		self.OSAccuracyLabel = QtGui.QLabel()
-		self.OSAccuracyText = QtGui.QLabel()
-		self.OSAccuracyLayout = QtGui.QHBoxLayout()
+		self.OSAccuracyLabel = QtWidgets.QLabel()
+		self.OSAccuracyText = QtWidgets.QLabel()
+		self.OSAccuracyLayout = QtWidgets.QHBoxLayout()
 		self.OSAccuracyLayout.addSpacing(20)
 		self.OSAccuracyLayout.addWidget(self.OSAccuracyLabel)
 		self.OSAccuracyLayout.addWidget(self.OSAccuracyText)
@@ -787,10 +795,10 @@ class HostInformationWidget(QtGui.QWidget):
 		self.OSNameLabel.setText('Name:')
 		self.OSAccuracyLabel.setText('Accuracy:')
 		#########
-		self.vlayout_1 = QtGui.QVBoxLayout()
-		self.vlayout_2 = QtGui.QVBoxLayout()
-		self.vlayout_3 = QtGui.QVBoxLayout()
-		self.hlayout_1 = QtGui.QHBoxLayout()
+		self.vlayout_1 = QtWidgets.QVBoxLayout()
+		self.vlayout_2 = QtWidgets.QVBoxLayout()
+		self.vlayout_3 = QtWidgets.QVBoxLayout()
+		self.hlayout_1 = QtWidgets.QHBoxLayout()
 		
 		self.vlayout_1.addWidget(self.HostStatusLabel)
 		self.vlayout_1.addLayout(self.HostStateLayout)
@@ -813,12 +821,12 @@ class HostInformationWidget(QtGui.QWidget):
 		self.vlayout_3.addLayout(self.OSAccuracyLayout)
 		self.vlayout_3.addStretch()
 		
-		self.vlayout_4 = QtGui.QVBoxLayout()
+		self.vlayout_4 = QtWidgets.QVBoxLayout()
 		self.vlayout_4.addLayout(self.hlayout_1)
 		self.vlayout_4.addSpacing(10)
 		self.vlayout_4.addLayout(self.vlayout_3)
 		
-		self.hlayout_4 = QtGui.QHBoxLayout(self.informationTab)
+		self.hlayout_4 = QtWidgets.QHBoxLayout(self.informationTab)
 		self.hlayout_4.addLayout(self.vlayout_4)
 		self.hlayout_4.insertStretch(-1,1)
 		self.hlayout_4.addStretch()

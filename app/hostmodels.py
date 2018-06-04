@@ -12,8 +12,11 @@ Copyright (c) 2014 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import re
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import *												# for QFont
+# from PyQt4 import QtGui, QtCore
+# from PyQt4.QtGui import *												# for QFont
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import *
+
 from auxiliary import *													# for bubble sort
 
 class HostsTableModel(QtCore.QAbstractTableModel):

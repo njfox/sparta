@@ -13,21 +13,23 @@ Copyright (c) 2015 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 
 import sys, os, ntpath, signal, re										# for file operations, to kill processes and for regex
 
-try:
-	from PyQt4.QtCore import *												# for filters dialog
-except ImportError:
-	print "[-] Import failed. PyQt4 library not found. \nTry installing it with: apt install python-qt4"
-
-try:
-	usePySide = False
-	from PyQt4 import QtWebKit
-except ImportError, e:
-	try:
-		from PySide import QtWebKit
-		usePySide = True
-	except ImportError, e:
-		print "[-] Import failed. QtWebKit library not found. \nTry installing it with: apt install python-pyside.qtwebkit"
-		exit(1)
+# try:
+# 	from PyQt4.QtCore import *												# for filters dialog
+# except ImportError:
+# 	print "[-] Import failed. PyQt4 library not found. \nTry installing it with: apt install python-qt4"
+from PyQt5.QtCore import *
+# try:
+# 	usePySide = False
+#	from PyQt4 import QtWebKit
+# except ImportError, e:
+# 	try:
+# 		from PySide import QtWebKit
+# 		usePySide = True
+# 	except ImportError, e:
+# 		print "[-] Import failed. QtWebKit library not found. \nTry installing it with: apt install python-pyside.qtwebkit"
+# 		exit(1)
+from PyQt5 import QtWebKitWidgets
+usePySide = False
 
 from ui.gui import *
 from ui.dialogs import *
@@ -63,7 +65,7 @@ class View(QtCore.QObject):
 		self.importProgressWidget = ProgressWidget('Importing nmap..', self.ui.centralwidget)
 		self.adddialog = AddHostsDialog(self.ui.centralwidget)		
 		self.settingsWidget = AddSettingsDialog(self.ui.centralwidget)
-		self.helpWidget = QtWebKit.QWebView()
+		self.helpWidget = QtWebKitWidgets.QWebView()
 		self.helpWidget.setWindowTitle('SPARTA Help')
 
 		# kali moves the help file so let's find it
@@ -179,7 +181,7 @@ class View(QtCore.QObject):
 		# hosts table (left)
 		headers = ["Id", "OS","Accuracy","Host","IPv4","IPv6","Mac","Status","Hostname","Vendor","Uptime","Lastboot","Distance","CheckedHost","State","Count"]
 		setTableProperties(self.ui.HostsTableView, len(headers), [0,2,4,5,6,7,8,9,10,11,12,13,14,15])
-		self.ui.HostsTableView.horizontalHeader().setResizeMode(1,2)
+		self.ui.HostsTableView.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
 		self.ui.HostsTableView.horizontalHeader().resizeSection(1,30)
 
 		# service names table (left)
@@ -193,12 +195,12 @@ class View(QtCore.QObject):
 		# service table (right)
 		headers = ["Host","Port","Port","Protocol","State","HostId","ServiceId","Name","Product","Version","Extrainfo","Fingerprint"]
 		setTableProperties(self.ui.ServicesTableView, len(headers), [0,1,5,6,8,10,11])		
-		self.ui.ServicesTableView.horizontalHeader().setResizeMode(0)
+		self.ui.ServicesTableView.horizontalHeader().setSectionResizeMode(0)
 
 		# ports by service (right)
 		headers = ["Host","Port","Port","Protocol","State","HostId","ServiceId","Name","Product","Version","Extrainfo","Fingerprint"]
 		setTableProperties(self.ui.ServicesTableView, len(headers), [2,5,6,8,10,11])
-		self.ui.ServicesTableView.horizontalHeader().setResizeMode(0)
+		self.ui.ServicesTableView.horizontalHeader().setSectionResizeMode(0)
 		self.ui.ServicesTableView.horizontalHeader().resizeSection(0,130)		# resize IP	
 
 		# scripts table (right)
@@ -1294,19 +1296,19 @@ class View(QtCore.QObject):
 
 	# this function restores the textview widget (now in the tools display widget) to its original tool tab (under the correct host)
 	def restoreToolTabWidget(self, clear=False):
-		if self.ui.DisplayWidget.findChild(QtGui.QPlainTextEdit) == self.ui.toolOutputTextView:
+		if self.ui.DisplayWidget.findChild(QtWidgets.QPlainTextEdit) == self.ui.toolOutputTextView:
 			return
 		
 		for host in self.hostTabs.keys():
 			hosttabs = self.hostTabs[host]
 			for tab in hosttabs:
-				if not 'screenshot' in str(tab.objectName()) and not tab.findChild(QtGui.QPlainTextEdit):
-					tab.layout().addWidget(self.ui.DisplayWidget.findChild(QtGui.QPlainTextEdit))
+				if not 'screenshot' in str(tab.objectName()) and not tab.findChild(QtWidgets.QPlainTextEdit):
+					tab.layout().addWidget(self.ui.DisplayWidget.findChild(QtWidgets.QPlainTextEdit))
 					break
 
 		if clear:
-			if self.ui.DisplayWidget.findChild(QtGui.QPlainTextEdit):	# remove the tool output currently in the tools display panel
-				self.ui.DisplayWidget.findChild(QtGui.QPlainTextEdit).setParent(None)
+			if self.ui.DisplayWidget.findChild(QtWidgets.QPlainTextEdit):	# remove the tool output currently in the tools display panel
+				self.ui.DisplayWidget.findChild(QtWidgets.QPlainTextEdit).setParent(None)
 				
 			self.ui.DisplayWidgetLayout.addWidget(self.ui.toolOutputTextView)
 

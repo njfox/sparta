@@ -12,8 +12,24 @@ Copyright (c) 2015 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import os, sys, urllib2, socket, time, datetime, locale, webbrowser, re	# for webrequests, screenshot timeouts, timestamps, browser stuff and regex
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import *												# for QProcess
+# try:
+# 	from PyQt4 import QtGui, QtCore
+# except ImportError:
+# 	try:
+from PyQt5 import QtGui, QtCore, QtWidgets
+	# except ImportError:
+	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
+	# 		  "install python-qt5 "
+	# 	sys.exit(1)
+# try:
+# 	from PyQt4.QtCore import *											# for QProcess
+# except ImportError:
+# 	try:
+from PyQt5.QtCore import *
+	# except ImportError:
+	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
+	# 		  "install python-qt5 "
+	# 	sys.exit(1)
 import errno															# temporary for isHttpd
 import subprocess														# for screenshots with cutycapt
 import string															# for input validation
@@ -103,7 +119,7 @@ def setTableProperties(table, headersLen, hiddenColumnIndexes = []):
 
 	table.verticalHeader().setVisible(False)							# hide the row headers
 	table.setShowGrid(False)											# hide the table grid
-	table.setSelectionBehavior(QtGui.QTableView.SelectRows)				# select entire row instead of single cell
+	table.setSelectionBehavior(QtWidgets.QTableView.SelectRows)				# select entire row instead of single cell
 	table.setSortingEnabled(True)										# enable column sorting
 	table.horizontalHeader().setStretchLastSection(True)				# header behaviour
 	table.horizontalHeader().setSortIndicatorShown(False)				# hide sort arrow from column header

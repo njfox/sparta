@@ -19,21 +19,27 @@ except ImportError, e:
 	print "[-] Import failed. Elixir library not found. \nTry installing it with: apt install python-elixir"
 	exit(1)
 	
-try:
-	from PyQt4 import QtGui, QtCore
-except ImportError, e:
-	print "[-] Import failed. PyQt4 library not found. \nTry installing it with: apt install python-qt4"
-	print e
-	exit(1)
+# try:
+# 	from PyQt4 import QtGui, QtCore
+# except ImportError, e:
+# 	try:
+from PyQt5 import QtCore, QtGui
+	# except ImportError:
+	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt install python-qt5"
+	# 	print e
+	# 	exit(1)
 
-try:
-	from PyQt4 import QtWebKit
-except ImportError, e:
-	try:
-		from PySide import QtWebKit
-	except ImportError:
-		print "[-] Import failed. QtWebKit library not found. \nTry installing it with: apt install python-pyside.qtwebkit"
-		exit(1)
+# try:
+# 	from PyQt4 import QtWebKit
+# except ImportError, e:
+# 	try:
+# 		from PySide import QtWebKit
+# 	except ImportError:
+# 		try:
+from PyQt5 import QtWebKit
+		# except ImportError:
+		# 	print "[-] Import failed. QtWebKit library not found. \nTry installing it with: apt install python-pyside.qtwebkit or apt install qt5-webkit"
+		# 	exit(1)
 	
 from app.logic import *
 from ui.gui import *
@@ -41,11 +47,11 @@ from ui.view import *
 from controller.controller import *
 
 # this class is used to catch events such as arrow key presses or close window (X)
-class MyEventFilter(QObject):
+class MyEventFilter(QtCore.QObject):
 	
 	def eventFilter(self, receiver, event):
 		# catch up/down arrow key presses in hoststable
-		if(event.type() == QEvent.KeyPress and (receiver == view.ui.HostsTableView or receiver == view.ui.ServiceNamesTableView or receiver == view.ui.ToolsTableView or receiver == view.ui.ToolHostsTableView or receiver == view.ui.ScriptsTableView or receiver == view.ui.ServicesTableView or receiver == view.settingsWidget.toolForHostsTableWidget or receiver == view.settingsWidget.toolForServiceTableWidget or receiver == view.settingsWidget.toolForTerminalTableWidget)):
+		if(event.type() == QtCore.QEvent.KeyPress and (receiver == view.ui.HostsTableView or receiver == view.ui.ServiceNamesTableView or receiver == view.ui.ToolsTableView or receiver == view.ui.ToolHostsTableView or receiver == view.ui.ScriptsTableView or receiver == view.ui.ServicesTableView or receiver == view.settingsWidget.toolForHostsTableWidget or receiver == view.settingsWidget.toolForServiceTableWidget or receiver == view.settingsWidget.toolForTerminalTableWidget)):
 			key = event.key()
 			if not receiver.selectionModel().selectedRows():
 				return True
@@ -68,7 +74,7 @@ class MyEventFilter(QObject):
 
 			return True
 			
-		elif(event.type() == QEvent.Close and receiver == MainWindow):
+		elif(event.type() == QtCore.QEvent.Close and receiver == MainWindow):
 			event.ignore()
 			view.appExit()
 			return True
@@ -78,12 +84,12 @@ class MyEventFilter(QObject):
 
 if __name__ == "__main__":
 
-	app = QtGui.QApplication(sys.argv)
+	app = QtWidgets.QApplication(sys.argv)
 	myFilter = MyEventFilter()						# to capture events
 	app.installEventFilter(myFilter)
-	app.setWindowIcon(QIcon('./images/icons/logo.png'))
+	app.setWindowIcon(QtGui.QIcon('./images/icons/logo.png'))
 	
-	MainWindow = QtGui.QMainWindow()
+	MainWindow = QtWidgets.QMainWindow()
 	ui = Ui_MainWindow()
 	ui.setupUi(MainWindow)
 

@@ -12,7 +12,8 @@ Copyright (c) 2015 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import re
-from PyQt4 import QtGui, QtCore
+#from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 from auxiliary import *													# for bubble sort
 
 class ProcessesTableModel(QtCore.QAbstractTableModel):

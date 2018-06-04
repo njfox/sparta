@@ -12,9 +12,11 @@ Copyright (c) 2014 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import sys, os
-from PyQt4 import QtCore, QtGui
+# from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 from app.auxiliary import *												# for timestamp
-
+import faulthandler
+faulthandler.enable()
 # this class reads and writes application settings
 class AppSettings():
 	def __init__(self):
@@ -182,7 +184,7 @@ class AppSettings():
 		self.actions.beginGroup('GeneralSettings')
 		keys = self.actions.childKeys()
 		for k in keys:
-			settings.update({str(k):str(self.actions.value(k).toString())})
+			settings.update({str(k):str(self.actions.value(k).encode('ascii'))})
 		self.actions.endGroup()
 		return settings
 		
@@ -191,7 +193,7 @@ class AppSettings():
 		self.actions.beginGroup('BruteSettings')
 		keys = self.actions.childKeys()
 		for k in keys:
-			settings.update({str(k):str(self.actions.value(k).toString())})
+			settings.update({str(k):str(self.actions.value(k).encode('ascii'))})
 		self.actions.endGroup()
 		return settings
 
@@ -200,7 +202,7 @@ class AppSettings():
 		self.actions.beginGroup('StagedNmapSettings')
 		keys = self.actions.childKeys()
 		for k in keys:
-			settings.update({str(k):str(self.actions.value(k).toString())})
+			settings.update({str(k):str(self.actions.value(k).encode('ascii'))})
 		self.actions.endGroup()
 		return settings
 
@@ -209,7 +211,7 @@ class AppSettings():
 		self.actions.beginGroup('ToolSettings')
 		keys = self.actions.childKeys()
 		for k in keys:
-			settings.update({str(k):str(self.actions.value(k).toString())})
+			settings.update({str(k):str(self.actions.value(k).encode('ascii'))})
 		self.actions.endGroup()
 		return settings
 	
@@ -220,8 +222,8 @@ class AppSettings():
 		self.actions.beginGroup('HostActions')
 		keys = self.actions.childKeys()
 		for k in keys:
-			hostactions.append([self.actions.value(k).toList()[0].toString(), str(k), self.actions.value(k).toList()[1].toString()])
-			sortArray.append(self.actions.value(k).toList()[0].toString())
+			hostactions.append([self.actions.value(k)[0].encode('ascii'), str(k), self.actions.value(k)[1].encode('ascii')])
+			sortArray.append(self.actions.value(k)[0].encode('ascii'))
 		self.actions.endGroup()
 		sortArrayWithArray(sortArray, hostactions)						# sort by label so that it appears nicely in the context menu
 		return hostactions
@@ -233,8 +235,8 @@ class AppSettings():
 		self.actions.beginGroup('PortActions')
 		keys = self.actions.childKeys()
 		for k in keys:
-			portactions.append([self.actions.value(k).toList()[0].toString(), str(k), self.actions.value(k).toList()[1].toString(), self.actions.value(k).toList()[2].toString()])
-			sortArray.append(self.actions.value(k).toList()[0].toString())
+			portactions.append([self.actions.value(k)[0].encode('ascii'), str(k), self.actions.value(k)[1].encode('ascii'), self.actions.value(k)[2].encode('ascii')])
+			sortArray.append(self.actions.value(k)[0].encode('ascii'))
 		self.actions.endGroup()				
 		sortArrayWithArray(sortArray, portactions)						# sort by label so that it appears nicely in the context menu		
 		return portactions
@@ -246,8 +248,8 @@ class AppSettings():
 		self.actions.beginGroup('PortTerminalActions')
 		keys = self.actions.childKeys()
 		for k in keys:
-			portactions.append([self.actions.value(k).toList()[0].toString(), str(k), self.actions.value(k).toList()[1].toString(), self.actions.value(k).toList()[2].toString()])
-			sortArray.append(self.actions.value(k).toList()[0].toString())
+			portactions.append([self.actions.value(k)[0].encode('ascii'), str(k), self.actions.value(k)[1].encode('ascii'), self.actions.value(k)[2].encode('ascii')])
+			sortArray.append(self.actions.value(k)[0].encode('ascii'))
 		self.actions.endGroup()
 		sortArrayWithArray(sortArray, portactions)						# sort by label so that it appears nicely in the context menu
 		return portactions
@@ -257,7 +259,7 @@ class AppSettings():
 		self.actions.beginGroup('SchedulerSettings')
 		keys = self.actions.childKeys()
 		for k in keys:
-			settings.append([str(k),self.actions.value(k).toList()[0].toString(),self.actions.value(k).toList()[1].toString()])
+			settings.append([str(k),self.actions.value(k)[0].encode('ascii'),self.actions.value(k)[1].encode('ascii')])
 		self.actions.endGroup()
 		return settings
 

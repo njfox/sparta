@@ -11,7 +11,8 @@ Copyright (c) 2014 SECFORCE (Antonio Quina and Leonidas Stavliotis)
     You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from PyQt4 import QtGui, QtCore
+#from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 from auxiliary import *													# for bubble sort
 
 class ServicesTableModel(QtCore.QAbstractTableModel):					# needs to inherit from QAbstractTableModel

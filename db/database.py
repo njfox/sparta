@@ -11,10 +11,20 @@ Copyright (c) 2014 SECFORCE (Antonio Quina and Leonidas Stavliotis)
     You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import sys
 from elixir import metadata, Entity, Field
 from elixir import create_all, setup_all, session
 from elixir import Unicode, UnicodeText
-from PyQt4.QtCore import QSemaphore
+# try:
+# 	from PyQt4.QtCore import QSemaphore
+# except ImportError:
+# 	try:
+from PyQt5.QtCore import QSemaphore
+	# except ImportError:
+	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
+	# 		  "install python-qt5 "
+	# 	sys.exit(1)
+
 from tables import *
 import time
 
