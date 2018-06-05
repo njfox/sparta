@@ -12,24 +12,8 @@ Copyright (c) 2015 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import os, sys, urllib2, socket, time, datetime, locale, webbrowser, re	# for webrequests, screenshot timeouts, timestamps, browser stuff and regex
-# try:
-# 	from PyQt4 import QtGui, QtCore
-# except ImportError:
-# 	try:
 from PyQt5 import QtGui, QtCore, QtWidgets
-	# except ImportError:
-	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
-	# 		  "install python-qt5 "
-	# 	sys.exit(1)
-# try:
-# 	from PyQt4.QtCore import *											# for QProcess
-# except ImportError:
-# 	try:
 from PyQt5.QtCore import *
-	# except ImportError:
-	# 	print "[-] Import failed. PyQt library not found. \nTry installing it with: apt install python-qt4 or apt " \
-	# 		  "install python-qt5 "
-	# 	sys.exit(1)
 import errno															# temporary for isHttpd
 import subprocess														# for screenshots with cutycapt
 import string															# for input validation
