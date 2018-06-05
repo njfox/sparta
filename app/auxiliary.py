@@ -12,6 +12,7 @@ Copyright (c) 2015 SECFORCE (Antonio Quina and Leonidas Stavliotis)
 '''
 
 import os, sys, urllib2, socket, time, datetime, locale, webbrowser, re	# for webrequests, screenshot timeouts, timestamps, browser stuff and regex
+import ssl
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import *												# for QProcess
 import errno															# temporary for isHttpd
@@ -48,7 +49,7 @@ def isHttp(url):
 		#print 'response code: ' + str(r.code)
 		#print 'response content: ' + str(r.read())
 		return True
-		
+
 	except urllib2.HTTPError, e:
 		reason = str(sys.exc_info()[1].reason)
 		# print reason
@@ -63,7 +64,7 @@ def isHttps(ip, port):
 	try:
 		req = urllib2.Request('https://'+ip+':'+port)
 		req.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0 Iceweasel/22.0')
-		r = urllib2.urlopen(req, timeout=5)
+		r = urllib2.urlopen(req, context=ssl._create_unverified_context(), timeout=5)
 #		print '\nresponse code: ' + str(r.code)
 #		print '\nresponse content: ' + str(r.read())
 		return True
@@ -266,7 +267,7 @@ class Screenshooter(QtCore.QThread):
 		for i in range(0, len(self.urls)):
 			try:
 				url = self.urls.pop(0)
-				outputfile = getTimestamp()+'-screenshot-'+url.replace(':', '-')+'.png'
+				outputfile = getTimestamp()+'-screenshot-'+url.replace(':', '-')
 				ip = url.split(':')[0]
 				port = url.split(':')[1]
 #				print '[+] Taking screenshot of '+url
@@ -277,8 +278,9 @@ class Screenshooter(QtCore.QThread):
 				else:
 					self.save("http://"+url, ip, port, outputfile)
 
-			except:
+			except Exception as e:
 				print '\t[-] Unable to take the screenshot. Moving on..'
+				print e.message
 				continue				
 				
 		self.processing = False
@@ -290,7 +292,8 @@ class Screenshooter(QtCore.QThread):
 
 	def save(self, url, ip, port, outputfile):
 		print '[+] Saving screenshot as: '+str(outputfile)
-		command = "cutycapt --max-wait="+str(self.timeout)+" --url="+str(url)+"/ --out=\""+str(self.outputfolder)+"/"+str(outputfile)+"\""
+		#command = "CutyCapt --max-wait="+str(self.timeout)+" --url="+str(url)+"/ --out=\""+str(self.outputfolder)+"/"+str(outputfile)+"\""
+		command = "httpscreenshot -H " + str(url) + " -o \"" + str(self.outputfolder) + "\" -oF " + str(outputfile) + " -p -a"
 #		print command
 		p = subprocess.Popen(command, shell=True)
 		p.wait()														# wait for command to finish
