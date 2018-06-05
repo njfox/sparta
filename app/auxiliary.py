@@ -16,7 +16,7 @@ import ssl
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import *												# for QProcess
 import errno															# temporary for isHttpd
-import subprocess														# for screenshots with cutycapt
+import subprocess														# for screenshots with httpscreenshot
 import string															# for input validation
 
 # bubble sort algorithm that sorts an array (in place) based on the values in another array
@@ -244,11 +244,12 @@ class BrowserOpener(QtCore.QThread):
 class Screenshooter(QtCore.QThread):
 	done = QtCore.pyqtSignal(str, str, str, name="done")				# signal sent after each individual screenshot is taken
 	
-	def __init__(self, timeout):
+	def __init__(self, timeout, path):
 		QtCore.QThread.__init__(self, parent=None)
 		self.urls = []
 		self.processing = False
 		self.timeout = timeout											# screenshooter timeout (ms)
+		self.screenshooter_path = path
 
 	def addToQueue(self, url):
 		self.urls.append(url)
@@ -292,9 +293,7 @@ class Screenshooter(QtCore.QThread):
 
 	def save(self, url, ip, port, outputfile):
 		print '[+] Saving screenshot as: '+str(outputfile)
-		#command = "CutyCapt --max-wait="+str(self.timeout)+" --url="+str(url)+"/ --out=\""+str(self.outputfolder)+"/"+str(outputfile)+"\""
-		command = "httpscreenshot -H " + str(url) + " -o \"" + str(self.outputfolder) + "\" -oF " + str(outputfile) + " -p -a"
-#		print command
+		command = self.screenshooter_path + " -H " + str(url) + " -o \"" + str(self.outputfolder) + "\" -oF " + str(outputfile) + " -p -a"
 		p = subprocess.Popen(command, shell=True)
 		p.wait()														# wait for command to finish
 		self.done.emit(ip,port,outputfile)								# send a signal to add the 'process' to the DB

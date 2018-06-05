@@ -52,7 +52,7 @@ class Controller():
 		self.nmapImporter.schedule.connect(self.scheduler)				# run automated attacks
 	
 	def initScreenshooter(self):
-		self.screenshooter = Screenshooter(self.settings.general_screenshooter_timeout)			# screenshot taker object (different thread)
+		self.screenshooter = Screenshooter(self.settings.general_screenshooter_timeout, self.settings.tools_path_httpscreenshot)			# screenshot taker object (different thread)
 		self.screenshooter.done.connect(self.screenshotFinished)
 
 	def initBrowserOpener(self):
