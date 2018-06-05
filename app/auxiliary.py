@@ -293,7 +293,7 @@ class Screenshooter(QtCore.QThread):
 
 	def save(self, url, ip, port, outputfile):
 		print '[+] Saving screenshot as: '+str(outputfile)
-		command = self.screenshooter_path + " -H " + str(url) + " -o \"" + str(self.outputfolder) + "\" -oF " + str(outputfile) + " -p -a"
+		command = self.screenshooter_path + " -H " + str(url) + " -oD \"" + str(self.outputfolder) + "\" -oF " + str(outputfile) + " -p -a"
 		p = subprocess.Popen(command, shell=True)
 		p.wait()														# wait for command to finish
 		self.done.emit(ip,port,outputfile)								# send a signal to add the 'process' to the DB
